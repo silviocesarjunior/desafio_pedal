@@ -1,55 +1,26 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
-import MapView, { Marker } from "react-native-maps";
-import MenuItem from './src/MenuItem';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import Home from '../Desafio/screens/Home';
+import Percurso from '../Desafio/screens/Percurso';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+function MyStack() {
   return (
-    <View style={styles.container}>
-      <Text>Pedalada</Text>
-      <MapView
-        style={styles.mapStyle}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        <Marker
-          coordinate={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-          }}
-          title="Você está aqui"
-        />
-      </MapView>
-      <View style={styles.menucontainer}> 
-        <MenuItem itemImage={require('./img/Vector-1.png')} />
-        <MenuItem itemImage={require('./img/Vector-2.png')} />
-        <MenuItem itemImage={require('./img/Vector-3.png')} />
-        <MenuItem itemImage={require('./img/Vector-4.png')} />
-      </View>
-    </View>
+    <Stack.Navigator >
+      <Stack.Screen name="Monitor de Atividade" component={Home} />
+      <Stack.Screen name="Gravar atividade" component={Percurso} />
+     
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mapStyle: {
-    alignItems: 'center',
-    width: Dimensions.get('window').width,
-    height: '70%',
-  },
-  menucontainer :{
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 10,
-    
-  }
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+      <MyStack />
+    </NavigationContainer>
+  );
+}
+
+
