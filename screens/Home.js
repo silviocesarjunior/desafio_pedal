@@ -48,7 +48,7 @@ export default function Home({ navigation }) {
                     <Image source={require('../img/Vector-3.png')} />
                     <Image source={require('../img/Vector-4.png')} />
                 </View>
-                <TouchableOpacity style={styles.container}>
+                <TouchableOpacity style={styles.container} activeOpacity={1}>
                     <Text style={styles.titlerodape}
                         title="Monitor de Atividade"
                         onPress={() => navigation.navigate('Gravar atividade')}>Iniciar Atividade</Text>

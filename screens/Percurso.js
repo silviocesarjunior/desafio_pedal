@@ -4,101 +4,112 @@ import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
-export default class Percurso extends Component {
-    
-    constructor(props) {
-        super(props);
+export default function Percurso() {
+    const [seconds, setSeconds] = useState(0);
+    const [minutes, setMinutes] = useState(0);
+    const [hour, setHour] = useState(0);
+    const [customInterval, setCustomInterval] = useState();
 
-        this.state = {
-            timer: null,
-            number: 0,
-            startStopText: 'Stop',
+    const startTimer = () => {
+        setCustomInterval(
+            setInterval(() => {
+                changeTime();
+            }, 1000)
+        );
+    };
+    const stopTimer = () => {
+        if (customInterval) {
+            clearInterval(cystomInterval);
         }
-        this.startStopButton = this.startStopButton.bind(this);
-    }
-    startStopButton() {
-        if (this.state.timer == null) {
-            let newS = this.state;
-            newS.startStopText = 'Stop';
-            this.setState(newS);
+    };
+    const clear = () => {
+        stopTimer();
+        setSeconds(0);
+        setMinutes(0);
+        setHour(0);
+    };
+    const changeTime = () => {
+        setSeconds((prevState) => {
+            if (prevState + 1 == 60) {
+                setMinutes(minutes + 1);
+                return 0;
+            }
+            return prevState + 1;
+        })
+    };
 
-            this.state.timer = setInterval(() => {
-                let newState = this.state;
-                newState.number += 0.1;
-                this.setState(newState);
-            }, 100);
-        } else {
-            clearInterval(this.state.timer);
-            this.state.timer = null;
-        };
-    
-        const [origin, setOrigin] = useState(null);
-        useEffect(() => {
-            (async function () {
-                const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-                if (status === 'granted') {
-                    let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-                    setOrigin({
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                        latitudeDelta: 0.00922,
-                        longitudeDelta: 0.00421,
-                    })
-                } else {
-                    throw new Error('Location permission not granted');
-                }
-            })();
-        }, []);
-        // render() {
 
-            return (
-                <View>
-                    <View style={styles.superior}>
-                        <View style={styles.iconWrapper1}>
-                            <Image source={require('../img/Vector.png')}></Image>
-                        </View>
-                        <Text style={styles.title}>
-                            Pedalada
-                        </Text>
-                        <View style={styles.iconWrapper2}>
-                            <Image source={require('../img/config.png')} />
-                        </View>
-                    </View>
-                    <MapView style={{ width: '100%', height: '75%' }}
-                        initialRegion={origin}
-                        showsUserLocation={true}>
-                    </MapView>
-                    <View style={styles.tempo}>
-                        <Text style={styles.temp}>
-                            tempo
-                        </Text>
-                        <View style={styles.body}>
-                            <View sstyle={styles.tcontainer}>
-                                <Text style={styles.counterText}>{this.state.number.toFixed(1)}</Text>
-                            </View>
-                        </View>
-                        <View style={styles.wrapper}>
-                            <Text style={styles.titlerodape}>Distância</Text>
-                            <Text style={styles.titlerodape}>Velocidade Km/h</Text>
-                        </View>
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.button} onPress={this.startStopButton}>
-                                <Text>{this.state.startStopText}</Text>
-                            </TouchableOpacity>
-                        </View>
+    const [origin, setOrigin] = useState(null);
+    useEffect(() => {
+        (async function () {
+            const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+            if (status === 'granted') {
+                let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+                setOrigin({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
+                })
+            } else {
+                throw new Error('Location permission not granted');
+            }
+        })();
+    }, []);
+    return (
+        <View>
+            <View style={styles.superior}>
+                <View style={styles.iconWrapper1}>
+                    <Image source={require('../img/Vector.png')}></Image>
+                </View>
+                <Text style={styles.title}>
+                    Pedalada
+                </Text>
+                <View style={styles.iconWrapper2}>
+                    <Image source={require('../img/config.png')} />
+                </View>
+            </View>
+            <MapView style={{ width: '100%', height: '75%' }}
+                initialRegion={origin}
+                showsUserLocation={true}>
+            </MapView>
+            <View style={styles.tempo}>
+                <Text style={styles.temp}>
+                    tempo
+                </Text>
+                <View style={styles.body}>
+                    <Text style={styles.temp}>
+                        {hour < 10 ? "0" + hour : hour}:
+                        {minutes < 10 ? "0" + minutes : minutes}:
+                        {seconds < 10 ? "0" + seconds : seconds}
+                    </Text>
+                    <View sstyle={styles.tcontainer}>
                     </View>
                 </View>
-            );
-        }
-    }
-// }
+                <View style={styles.wrapper}>
+                    <Text style={styles.titlerodape}>Distância</Text>
+                    <Text style={styles.titlerodape}>Velocidade Km/h</Text>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} activeOpacity={0.8} >
+                        <Text style={styles.gravar} title='Start' onPress={startTimer}>Gravar</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    );
+}
+
 const styles = StyleSheet.create({
+    gravar: {
+        fontSize: 16,
+    },
     button: {
         backgroundColor: '#fff',
         borderWidth: 1,
         borderRadius: 100,
         width: 344,
-        height: 30,
+        height: 28,
         justifyContent: 'center',
         flexDirection: 'row',
         alignItems: 'center',
